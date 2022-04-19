@@ -1,38 +1,43 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import { Phonebook, LabelName, InputContact, AddContact } from './ContactForm.styled';
-export class ContactForm extends Component {
-    state = {
-      name: '',
-      number: '',
-    }
+export const ContactForm = ({onSubmit}) => {
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
     
-  handleChange = e => {
+  const handleChange = e => {
     const { name, value } = e.target;
-    this.setState({[name]: value})
-  }
+    switch (name) {
+      case 'name':
+        setName(value);
+        break;
+      case 'number':
+        setNumber(value);
+        break;
+      default:
+        return;
+    }
+  };
   
-  handleSubmit = e => {
+  const handleSubmit = e => {
     e.preventDefault();
-    this.props.onSubmit(this.state);
-    this.reset();
+    onSubmit(name, number);
+    reset();
   }
 
-  reset = () => {
-    this.setState({name: '', number: ''})
+  const reset = () => {
+    setName('');
+    setNumber('');
   }
 
-  render() {
-    const { name, number } = this.state;
-
-    return (
-      <Phonebook onSubmit={this.handleSubmit}>
+  return (
+      <Phonebook onSubmit={handleSubmit}>
         <LabelName>
           Name
           <InputContact
             type="text"
             name="name"
             value={name}
-            onChange={this.handleChange}
+            onChange={handleChange}
             pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
             title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
             required
@@ -45,7 +50,7 @@ export class ContactForm extends Component {
             type="tel"
             name="number"
             value={number}
-            onChange={this.handleChange}
+            onChange={handleChange}
             pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
             title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
             required
@@ -55,6 +60,4 @@ export class ContactForm extends Component {
         <AddContact type='submit'>Add contact</AddContact>
       </Phonebook>
     );
-  }
-
 }
